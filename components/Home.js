@@ -1,14 +1,19 @@
 import React from 'react';
 import colors from '../assets/colors/colors'
-import { View, Image, Text, SafeAreaView, StyleSheet, Platform, StatusBar, FlatList } from 'react-native';
-import { Feather, AntDesign, Entypo, MaterialCommunityIcons } from 'react-native-vector-icons'
+import { View, ScrollView, Image, Text, SafeAreaView, StyleSheet, Platform, StatusBar, FlatList } from 'react-native';
+import { Feather, AntDesign, FontAwesome, Entypo, MaterialCommunityIcons } from 'react-native-vector-icons'
 import tournamentsData from '../assets/data/tournamentsData'
 import sportsCategoriesData from '../assets/data/sportsCategories';
+import tournamentEventData from '../assets/data/tournamentEventData';
+import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+
 export default Home = () => {
     const imagex = require('../assets/images/Arsenal_FC.png');
     const renderTournamentsItem = ({ item }) => {
         return (
-            <View style={styles.tournamentsItemWrapper}>
+            <View style={[styles.tournamentsItemWrapper, {
+                backgroundColor: item.id % 2 == 0 ? 'black' : colors.primary
+            }]}>
                 <Text style={styles.itemTitle}>{item.eventTitle}</Text>
                 <Image source={item.image} style={styles.imageItem}></Image>
             </View>
@@ -35,51 +40,90 @@ export default Home = () => {
     }
     return (
         <View style={styles.container}>
-            <SafeAreaView >
-                <View style={styles.headerWrapper}>
-                    <Text style={styles.greetText}>Hello,</Text>
-                    <View style={styles.userWrapper}>
-                        <Text style={styles.userNameText}>WADE WARREN</Text>
-                        <AntDesign name='plussquare' size={32} color={colors.primary} ></AntDesign>
+            <ScrollView contentInsetAdjustmentBehavior='automatic'>
+                <SafeAreaView >
+                    <View style={styles.headerWrapper}>
+                        <Text style={styles.greetText}>Hello,</Text>
+                        <View style={styles.userWrapper}>
+                            <Text style={styles.userNameText}>Ryan Mercurio</Text>
+                            <AntDesign name='plussquare' size={32} color={colors.primary} ></AntDesign>
+                        </View>
+                        <View style={styles.searchBoxWrapper}>
+                            <Feather name='search' size={16} ></Feather>
+                            <Text style={styles.searchText}>Search by events, teams</Text>
+                        </View>
                     </View>
-                    <View style={styles.searchBoxWrapper}>
-                        <Feather name='search' size={16} ></Feather>
-                        <Text style={styles.searchText}>Search by events, teams</Text>
+                </SafeAreaView>
+                {/* Tournament */}
+                <View style={styles.tournamentWrapper}>
+                    <Text style={styles.tournamentText}>Tournaments</Text>
+                    <FlatList
+                        data={tournamentsData}
+                        renderItem={renderTournamentsItem}
+                        keyExtractor={(item) => item.id}
+                        horizontal={true}>
+                    </FlatList>
+                </View>
+                {/* Top Events */}
+                <View style={styles.eventsWrapper}>
+                    <Text style={styles.eventText}>Top Events</Text>
+                    <View style={styles.liveWrapper}>
+                        <Text style={styles.liveText}>
+                            LIVE
+                        </Text>
+                        <Entypo name='switch' size={24} color={colors.primary} style={styles.switchIcon}>
+
+                        </Entypo>
                     </View>
                 </View>
-            </SafeAreaView>
-            {/* Tournament */}
-            <View style={styles.tournamentWrapper}>
-                <Text style={styles.tournamentText}>Tournaments</Text>
-                <FlatList
-                    data={tournamentsData}
-                    renderItem={renderTournamentsItem}
-                    keyExtractor={(item) => item.id}
-                    horizontal={true}>
-                </FlatList>
-            </View>
-            {/* Top Events */}
-            <View style={styles.eventsWrapper}>
-                <Text style={styles.eventText}>Top Events</Text>
-                <View style={styles.liveWrapper}>
-                    <Text style={styles.liveText}>
-                        LIVE
-                    </Text>
-                    <Entypo name='switch' size={24} color={colors.primary} style={styles.switchIcon}>
-
-                    </Entypo>
+                <View stlye={styles.sportsCategoriesWrapper}>
+                    <FlatList
+                        data={sportsCategoriesData}
+                        renderItem={renderSportsCategoriesItem}
+                        keyExtractor={(item) => item.id}
+                        horizontal={true}>
+                    </FlatList>
                 </View>
-            </View>
-            <View stlye={styles.sportsCategoriesWrapper}>
-                <FlatList
-                    data={sportsCategoriesData}
-                    renderItem={renderSportsCategoriesItem}
-                    keyExtractor={(item) => item.id}
-                    horizontal={true}>
-                </FlatList>
-            </View>
+                {/* Tournament Events */}
+                {tournamentEventData.map((item) => (
+                    <View key={item.id} style={[styles.tournamentEventCard, {
+                        marginTop: item.id == 1 ? 24 : 16
+                    }]}>
+                        <View style={styles.teamOne}>
+                            <Image source={item.teamLogo1} style={styles.teamLogo}></Image>
+                            <Text style={styles.teamName}>{item.teamName1}</Text>
 
-        </View>
+                            <View style={styles.oddsBox}>
+                                <Text style={styles.oddsText}>1.8</Text>
+                            </View>
+
+                        </View>
+                        <View style={styles.scoreBoard}>
+                            <Text style={styles.eventNameText}>{item.eventName}</Text>
+                            <Text style={styles.scores}>1:2</Text>
+                            <View style={styles.timer}>
+                                <FontAwesome name='circle' size={8} color={colors.primary}></FontAwesome>
+                                <Text style={styles.time}>49:30</Text>
+                            </View>
+                            <View style={styles.oddsBox}>
+                                <Text style={styles.oddsText}>1.8</Text>
+                            </View>
+                        </View>
+                        <View style={styles.teamOne}>
+                            <Image source={item.teamLogo2} style={styles.teamLogo} ></Image>
+                            <Text style={styles.teamName} > {item.teamName2}</Text>
+                            <View style={styles.oddsBox}>
+                                <Text style={styles.oddsText}>1.8</Text>
+                            </View>
+                        </View>
+                    </View>
+                ))
+                }
+
+
+            </ScrollView>
+
+        </View >
     )
 };
 const styles = StyleSheet.create({
@@ -132,7 +176,6 @@ const styles = StyleSheet.create({
     },
     tournamentsItemWrapper: {
         flexDirection: 'row',
-        backgroundColor: colors.primary,
         marginRight: 12,
         width: 270,
         marginTop: 14,
@@ -186,6 +229,68 @@ const styles = StyleSheet.create({
     },
     sportsName: {
         paddingLeft: 6
-    }
+    },
+    tournamentEventCard: {
+        flexDirection: 'row',
+        backgroundColor: colors.gray,
+        marginHorizontal: 32,
+        shadowColor: color.gray,
+        borderRadius: 10,
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+    },
+    teamOne: {
+        alignItems: 'center'
+    },
+    teamLogo: {
+        //marginLeft: 34,
+    },
+    teamName: {
+        marginTop: 7,
+    },
+    oddsBox: {
+        marginTop: 13,
+        //marginBottom: 16,
+        backgroundColor: colors.backgroundGray,
+        shadowColor: colors.black,
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        borderRadius: 10,
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
+        width: 83,
+        alignItems: 'center'
+
+    },
+    oddsText: {
+        marginVertical: 10,
+    },
+    scoreBoard: {
+        alignItems: 'center'
+    },
+    eventNameText: {
+        fontSize: 10,
+        color: colors.black,
+    },
+    scores: {
+        marginTop: 10,
+        fontSize: 22,
+        fontWeight: 'bold',
+    },
+    timer: {
+        marginTop: 7,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    time: {
+        fontSize: 10,
+        marginLeft: 5
+    },
+
 
 })
